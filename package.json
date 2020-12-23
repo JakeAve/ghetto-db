@@ -1,7 +1,8 @@
 {
     "name": "ghetto-db",
     "version": "0.0.1",
-    "description": "",
+    "description": "Slow and dirty JSON database that writes directly to disk",
+    "homepage": "https://github.com/JakeAve/ghetto-db#ghetto-db",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
@@ -11,9 +12,12 @@
         "prepublish": "npm run build",
         "test": "mocha -r ts-node/register 'test/**/*.ts'"
     },
-    "keywords": [],
+    "keywords": [
+        "database",
+        "json"
+    ],
     "author": "Jacob Avery",
-    "license": "ISC",
+    "license": "MIT",
     "devDependencies": {
         "@types/expect": "^24.3.0",
         "@types/mocha": "^8.2.0",
