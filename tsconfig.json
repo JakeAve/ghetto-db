@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist",
+        "esModuleInterop": true,
+        "declaration": true
+    },
+    "exclude": ["test", "node_modules", "dist"]
+}
