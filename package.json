@@ -14,7 +14,7 @@
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
         "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\" --quiet --fix",
         "prepare": "npm run build",
-        "prepublishOnly": "npm test",
+        "prepublishOnly": "npm build && npm test",
         "test": "mocha -r ts-node/register 'test/**/*.ts'"
     },
     "keywords": [
