@@ -1,6 +1,6 @@
 {
     "name": "ghetto-db",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Quick and dirty JSON database that writes directly to local machine",
     "homepage": "https://github.com/JakeAve/ghetto-db#ghetto-db",
     "main": "./dist/index.js",
