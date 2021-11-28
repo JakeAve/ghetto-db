@@ -1,13 +1,14 @@
 import path from 'path';
 import fs from 'fs';
 import { promisify } from 'util';
+import Hood from './Hood';
 
 const readFile = promisify(fs.readFile);
 const readdir = promisify(fs.readdir);
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
 
-export default class GhettoDB {
+export class GhettoDB {
     dbRoot: string;
     constructor(rootPath = './ghetto-db-root') {
         this.dbRoot = rootPath;
@@ -16,8 +17,49 @@ export default class GhettoDB {
         }
     }
 
-    recordPath(record: string) {
-        return path.join(this.dbRoot, `/${record}.json`);
+    async destroyAllRecords() {
+        const dirs = await readdir(this.dbRoot);
+        const promises = dirs.map((file) =>
+            unlink(path.join(this.dbRoot, file)),
+        );
+        await Promise.all(promises);
+    }
+
+    async destroyRecord(recordName: string) {
+        const rp = this.getRecordPath(recordName);
+        await unlink(rp);
+    }
+
+    getRecordPath(recordName: string) {
+        return path.join(this.dbRoot, `/${recordName}.json`);
+    }
+
+    async getRecords() {
+        const dirs = await readdir(this.dbRoot);
+        return dirs.map((file) => file.replace(/\.json$/, ''));
+    }
+
+    Hood(recordName: string, ...entries: object[]) {
+        return new Hood(this, recordName, entries);
+    }
+
+    async readRecord(recordName: string) {
+        const rp = this.getRecordPath(recordName);
+        const rawData = await readFile(rp);
+        return JSON.parse(rawData.toString());
+    }
+
+    async storeRecord(recordName: string, data: any = '') {
+        const rp = this.getRecordPath(recordName);
+        await writeFile(rp, JSON.stringify(data));
+        return data;
+    }
+
+    async updateRecord(recordName: string, callback: any) {
+        const existingData = await this.readRecord(recordName);
+        const data =
+            typeof callback === 'function' ? callback(existingData) : callback;
+        return await this.storeRecord(recordName, data);
     }
 
     waitForRoot(rp: string) {
@@ -30,56 +72,5 @@ export default class GhettoDB {
                 });
             }
         });
-    }
-
-    async storeRecord(record: string, data: any) {
-        try {
-            const rp = this.recordPath(record);
-            await writeFile(rp, JSON.stringify(data));
-            return data;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    async readRecord(record: string) {
-        try {
-            const rp = this.recordPath(record);
-            const rawData = await readFile(rp);
-            return JSON.parse(rawData.toString());
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    async updateRecord(record: string, callback: any) {
-        try {
-            const existingData = await this.readRecord(record);
-            const data =
-                typeof callback === 'function'
-                    ? callback(existingData)
-                    : callback;
-            return await this.storeRecord(record, data);
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    async destroyRecord(record: string) {
-        try {
-            const rp = this.recordPath(record);
-            await unlink(rp);
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    async getRecords() {
-        try {
-            const dirs = await readdir(this.dbRoot);
-            return dirs.map((file) => file.replace(/\.json$/, ''));
-        } catch (e) {
-            throw e;
-        }
     }
 }

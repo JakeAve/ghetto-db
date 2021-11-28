@@ -1,6 +1,6 @@
 import assert from 'assert';
 import fs from 'fs';
-import GhettoDB from '../dist/index';
+import { GhettoDB } from '../dist/index';
 
 const fullTestPath = './db/test';
 const testDir = './db';
